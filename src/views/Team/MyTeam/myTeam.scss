@@ -1,0 +1,29 @@
+.box{
+    margin: 30px auto 0;
+    width: 90%;
+    .teamDetailBox{
+        display: flex;
+        // align-items: center;
+        .teamDetailLeft{
+            margin-right: 20px;
+        }
+        .teamDetailRight{
+            h2{
+                margin: 0;
+                margin-bottom: 20px;
+            }
+            .teamDetailRightDesc{
+                color: #666;
+            }
+        }
+    }
+    .operationBox{
+        padding: 20px 0;
+    }
+}
+
+.block{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+}
