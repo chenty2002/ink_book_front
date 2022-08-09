@@ -30,7 +30,7 @@
           style="margin-right:10px;">
         </el-date-picker>
         <el-form-item>
-          <el-button icon="el-icon-search" circle @click="submitSearchProject"></el-button>
+          <el-button icon="el-icon-search" @click="submitSearchProject"></el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -80,48 +80,14 @@
               </div>
             </el-popover>
             <el-button-group style="margin-top: 13px">
-              <el-button
-                type="primary"
-                icon="el-icon-edit"
-                style="display: flex;
-                justify-content: center;
-                width: 13px"
-                @click="editProject(project)"
-              />
-              <!--修改项目弹窗-->
-              <el-dialog
-                title="编辑项目信息"
-                width="50%"
-                :visible.sync="dialog_edit_visible"
-                :close-on-click-modal="false"
-                :show-close="false"
-                :modal-append-to-body="false"
-              >
-                <el-form ref="edit_form" :model="edit_form" :rules="rules">
-                  <el-form-item label="项目名称" :label-width="formLabelWidth" prop="name">
-                    <el-input v-model="edit_form.name" placeholder="请输入项目名称" />
-                  </el-form-item>
-                  <el-form-item label="项目描述" :label-width="formLabelWidth" prop="content">
-                    <el-input
-                      v-model="edit_form.content"
-                      type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 6}"
-                      placeholder="请输入项目描述"
-                    />
-                  </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                  <el-button @click="editCancel">取 消</el-button>
-                  <el-button type="primary" @click="editConfirm">确 定</el-button>
-                </div>
-              </el-dialog>
-              <!--<el-button-->
-              <!--type="primary"-->
-              <!--icon="el-icon-search"-->
-              <!--style="display: flex;-->
-              <!--justify-content: center;-->
-              <!--width: 13px"-->
-              <!--/>-->
+							<el-button
+								type="success"
+								icon="el-icon-check"
+								style="display: flex;
+								justify-content: center;
+								width: 13px"
+								@click="restorePro(project)"
+							/>
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -135,38 +101,6 @@
         </el-card>
       </el-col>
     </el-row>
-    
-    <el-button type="primary" style="margin-left: 23px; margin-top: 15px" @click="dialog_add_visible = true">
-      <ion-icon name="add-sharp" style="font-size: 20px" />
-    </el-button>
-    <!--添加项目弹窗-->
-    <el-dialog
-      title="创建项目信息"
-      width="50%"
-      :visible.sync="dialog_add_visible"
-      :close-on-click-modal="false"
-      :show-close="false"
-      :modal-append-to-body="false"
-    >
-      <el-form ref="add_form" :model="add_form" :rules="rules">
-        <el-form-item label="项目名称" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="add_form.name" placeholder="请输入项目名称" />
-        </el-form-item>
-        <el-form-item label="项目描述" :label-width="formLabelWidth" prop="content">
-          <el-input
-            v-model="add_form.content"
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 6}"
-            placeholder="请输入项目描述"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addCancel">取 消</el-button>
-        <el-button type="primary" @click="addConfirm">确 定</el-button>
-      </div>
-    </el-dialog>
-
     <Pagination
       :total="tableData.length"
       :page-size="4"
@@ -177,7 +111,7 @@
 </template>
 
 <script>
-import { getGroupProject, searchProject, modifyProject, newProject, deleteProject } from '@/api/project'
+import { getDeletedGroupProject, searchProject, deleteProject, restoreProject } from '@/api/project'
 import Pagination from '@/components/Pagination/Pagination'
 
 export default {
@@ -243,26 +177,6 @@ export default {
       },
       sorting: '创建时间顺序',
       false: false,
-      dialog_add_visible: false,
-      dialog_edit_visible: false,
-      project_to_edit: {},
-      add_form: {
-        name: '',
-        content: '',
-        type: ''
-      },
-      edit_form: {
-        name: '',
-        content: ''
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入项目名称', trigger: 'blur' }
-        ],
-        content: [
-          { required: true, message: '请输入项目描述内容', trigger: 'change' }
-        ]
-      },
       formLabelWidth: '80px',
       curPage: 1,
       tableData: []
@@ -320,7 +234,7 @@ export default {
         start: this.searchDate.date[0],
         end: this.searchDate.date[1],
         word: this.searchWord,
-        deleted: 0
+        deleted: 1
       }).then((res) => {
         this.tableData = res.data
       })
@@ -346,7 +260,7 @@ export default {
       this.sortProjects();
     },
     loadProject() {
-      getGroupProject({// todo: groupId
+      getDeletedGroupProject({// todo: groupId
         groupId: 21
       }).then((res) => {
         if (res.code !== 1) {
@@ -362,30 +276,17 @@ export default {
     changePage(num) {
       this.curPage = num
     },
-    addCancel() {
-      this.dialog_add_visible = false
-      this.$refs['add_form'].resetFields()
-    },
-    addConfirm() {
-      if (this.add_form.name === '' || this.add_form.content === '') {
-        this.$message('项目名称及描述均不能为空')
-      } else {
-        this.dialog_add_visible = false
-        var newPro = {
-          groupId: 21,
-          projectName: this.add_form.name,
-          projectDescription: this.add_form.content
-        }
-        newProject(newPro).then((res) => {
-          if (res.cdoe !== 1) {
-            this.$error(res.msg)
-            return
-          }
-        })
-        this.$refs['add_form'].resetFields()
-        this.resetForm()
-      }
-    },
+		restorePro(project) {
+			restoreProject({
+				projectId: project.projectId
+			}).then((res) => {
+				if(res.code !== 1) {
+					this.$error(res.msg)
+					return
+				}
+			})
+			resetForm();
+		},
     rmProject(project) {
       deleteProject({
         projectId: project.projectId,
@@ -397,37 +298,6 @@ export default {
           }
       })
       this.resetForm()
-    },
-    editProject(project) {
-      this.project_to_edit = project
-      this.dialog_edit_visible = true
-      this.edit_form.id = project.projectId
-      this.edit_form.name = project.projectName
-      this.edit_form.content = project.projectDescription
-    },
-    editCancel() {
-      this.dialog_edit_visible = false
-      this.$refs['edit_form'].resetFields()
-    },
-    editConfirm() {
-      if (this.edit_form.name === '' || this.edit_form.content === '') {
-        this.$message('项目名称及描述均不能为空')
-      } else {
-        this.project_to_edit.projectId = this.edit_form.id
-        this.project_to_edit.projectName = this.edit_form.name
-        this.project_to_edit.projectDescription = this.edit_form.content
-        modifyProject(this.project_to_edit).then((res) => {
-          if(res.code === 0) {
-            this.$error('保存失败')
-          }
-          return
-        })
-        // alert(this.project_to_edit.projectId)
-        // alert(this.project_to_edit.projectName)
-        // alert(this.project_to_edit.projectDescription)
-        this.dialog_edit_visible = false
-        this.$refs['edit_form'].resetFields()
-      }
     }
   }
 }

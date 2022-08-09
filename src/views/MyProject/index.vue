@@ -7,7 +7,7 @@
             <project class="project" />
           </el-tab-pane>
           <el-tab-pane label="回收站">
-            回收站
+            
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -18,6 +18,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Project from '@/views/MyProject/project'
+
 
 export default {
   name: 'DashBoard',

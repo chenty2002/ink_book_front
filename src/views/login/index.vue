@@ -93,7 +93,7 @@
           type="text"
           tabindex="1"
         />
-        <span><el-button :loading="sendmailloading" style="width:23%" type="primary" @click="sendemail">{{ 0 == this.statuscode ? '发送邮件' : this.statuscode }}</el-button></span>
+        <span><el-button :loading="sendmailloading" style="width:23%" type="primary" @click="sendemail">{{ 0 == statuscode ? '发送邮件' : statuscode }}</el-button></span>
       </el-form-item>
       <el-button
         :loading="loading"
@@ -154,6 +154,9 @@ export default {
     sendemail() {
       if (this.loginForm.userEmail === '') {
         this.$message.error('请输入邮箱!')
+        return
+      } else if (!/\w+@(\w+.)+[a-z]{2,3}/.test(this.loginForm.userEmail)) {
+        this.$message.error('邮箱格式不正确！')
         return
       }
 
@@ -236,7 +239,7 @@ export default {
                     this.loading = false
                     return
                   }
-                  this.$message.success('注册成功，请立即去登录！')
+                  this.$message.success('注册成功，立即登录！')
                   this.isLogin = true
                   this.loading = false
                 })
