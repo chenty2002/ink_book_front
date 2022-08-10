@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       title: '',
-      content: null,
+      docContent: '',
       editorOption: {}
     }
   },
