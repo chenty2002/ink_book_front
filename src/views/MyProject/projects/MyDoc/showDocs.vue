@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div><el-button type="primary" @click="get()">获取全部文档</el-button></div>
+<!--    <div><el-button type="primary" @click="get()">获取全部文档</el-button></div>-->
     <doc class="doc" />
     <br>
   </div>
@@ -8,7 +8,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import doc from '@/views/MyDoc/createDoc.vue'
+import doc from '@/views/MyProject/projects/MyDoc/Docs.vue'
 export default {
   name: 'DashBoard',
   components: { doc },

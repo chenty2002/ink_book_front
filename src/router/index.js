@@ -11,64 +11,79 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
+  // {
+  //   path: '/dashboard',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'dashboard',
+  //     name: 'Dashboard',
+  //     component: () => import('@/views/dashboard/index'),
+  //     meta: { title: '选项', icon: 'dashboard' }
+  //   }]
+  // },
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '选项', icon: 'dashboard' }
-    }]
+    redirect: '/team',
+    children: [
+      {
+        path: '',
+        name: 'team',
+        component: () => import('@/views/Team/MyTeam/myTeam')
+      }
+    ]
   },
   {
-    path: '/team',
+    path: '/teamDetail',
     component: Layout,
     children: [
       {
-        path: 'index',
-        name: 'team',
-        component: () => import('@/views/Team/MyTeam/myTeam'),
-        meta: { title: '团队', icon: 'team' }
-      },
-      {
-        path: 'teamDetail',
+        path: '',
         name: 'teamDetail',
         component: () => import('@/views/Team/teamDetail/teamDetail'),
-        hidden: true
+        meta: { title: '成员管理', icon: 'person' }
       }
     ]
   },
   {
     path: '/project',
     component: Layout,
+    meta: { title: '项目管理', icon: 'project' },
     children: [
       {
-        path: 'index',
-        name: 'project',
-        component: () => import('@/views/MyProject/index'),
-        meta: { title: '项目', icon: 'project' }
+        path: 'all_new',
+        name: 'all_project',
+        component: () => import('@/views/MyProject/projects/project_new'),
+        meta: { title: '所有项目(新）', icon: 'projects' }
+      },
+      {
+        path: 'all',
+        name: 'all_project',
+        component: () => import('@/views/MyProject/projects/index'),
+        meta: { title: '所有项目', icon: 'projects' }
+      },
+      {
+        path: 'recycle_bin',
+        name: 'recycle_bin',
+        component: () => import('@/views/MyProject/projects/trash_bin'),
+        meta: { title: '回收站', icon: 'trash-bin' }
       }
     ]
   },
   {
+    path: '/project_detail',
+    name: 'project_detail',
+    component: () => import('@/views/MyProject/projects/detail')
+  },
+  {
     path: '/design',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'design',
-        component: () => import('@/views/MyDesign/index'),
-        meta: { title: '设计原型', icon: 'design' }
-      }
-    ]
+    name: 'design',
+    component: () => import('@/views/MyProject/projects/MyDesign/model')
   },
   {
     path: '/doc',
@@ -79,13 +94,13 @@ export const constantRoutes = [
       {
         path: 'createDoc',
         name: 'createDoc',
-        component: () => import('@/views/MyDoc/createDoc'),
+        component: () => import('@/views/MyProject/projects/MyDoc/createDoc'),
         meta: { title: '新建文档', icon: 'form' }
       },
       {
         path: 'documents',
         name: 'documents',
-        component: () => import('@/views/MyDoc/showDocs'),
+        component: () => import('@/views/MyProject/projects/MyDoc/showDocs'),
         meta: { title: '所有文档', icon: 'documents' }
 
       }

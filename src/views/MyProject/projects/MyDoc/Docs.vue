@@ -72,19 +72,15 @@
                       文档内容：
                     </div>
                     <div style="text-align: left; margin: 20px 60px">
-                      <quill-editor ref="myQuillEditor" v-model="document_to_show.content" disabled="true" style="margin: 20px; height:345px" :options="editorOption" />
+                      <quill-editor
+                        ref="myQuillEditor"
+                        v-model="document_to_show.content"
+                        disabled="true"
+                        style="margin: 20px; height:345px"
+                        :options="editorOption"
+                      />
                     </div>
                   </div>
-                  <!--                <el-form ref="show_form" :model="show_form" :rules="rules">-->
-                  <!--                  <el-form-item label="文档标题" :label-width="formLabelWidth" prop="name">-->
-                  <!--                    <el-input v-model="show_form.name" placeholder="请输入文档名称" />-->
-                  <!--                  </el-form-item>-->
-                  <!--                  <el-form-item label="文档内容" :label-width="formLabelWidth" prop="content">-->
-                  <!--                    <el-card style="height: 455px;">-->
-                  <!--                      <quill-editor ref="myQuillEditor" v-model="show_form.content" style="height:355px" :options="editorOption" />-->
-                  <!--                    </el-card>-->
-                  <!--                  </el-form-item>-->
-                  <!--                </el-form>-->
                   <el-button style="margin-top: 40px" @click="showCancel">关 闭</el-button>
                 </el-dialog>
                 <el-button
@@ -110,11 +106,11 @@
     <div v-show="!show" style="position: absolute; width: 80%">
       <el-form ref="edit_form" :model="edit_form" :rules="rules">
         <el-form-item label="文档标题" :label-width="formLabelWidth" prop="name">
-          <el-input v-model="edit_form.name" placeholder="请输入文档名称" />
+          <el-input v-model="edit_form.name" placeholder="请输入文档名称"/>
         </el-form-item>
         <el-form-item label="文档内容" :label-width="formLabelWidth" prop="content">
           <el-card style="height: 455px;">
-            <quill-editor ref="myQuillEditor" v-model="edit_form.content" style="height:315px" :options="editorOption" />
+            <quill-editor ref="myQuillEditor" v-model="edit_form.content" style="height:315px" :options="editorOption"/>
           </el-card>
         </el-form-item>
       </el-form>

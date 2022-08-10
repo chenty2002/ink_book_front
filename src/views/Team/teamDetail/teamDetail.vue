@@ -118,10 +118,10 @@
       <div class="block">
         <el-pagination
           :current-page="currentPage4"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="5"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total=0
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -143,64 +143,8 @@ export default {
       rules: {
         person: [{ required: true, message: '请选择人员', trigger: 'change' }]
       },
-      options: [
-        {
-          label: 'Tom',
-          value: '0',
-          nickname: '昵称10',
-          realName: 'Tom',
-          email: '3044545@qq.com',
-          role: '成员'
-        },
-        {
-          nickname: '昵称11',
-          realName: 'Tony',
-          email: '3044545@qq.com',
-          role: '成员',
-          label: 'Tony',
-          value: '1'
-        },
-        {
-          nickname: '昵称13',
-          realName: 'Jerry',
-          email: '3044545@qq.com',
-          role: '成员',
-          label: 'Jerry',
-          value: '2'
-        }
-      ],
-      tableData: [
-        {
-          nickname: '昵称1',
-          realName: '张三',
-          email: '3044545@qq.com',
-          role: '管理'
-        },
-        {
-          nickname: '昵称2',
-          realName: '李四',
-          email: '3044545@qq.com',
-          role: '成员'
-        },
-        {
-          nickname: '昵称3',
-          realName: '王五',
-          email: '3044545@qq.com',
-          role: '成员'
-        },
-        {
-          nickname: '昵称4',
-          realName: '张三',
-          email: '3044545@qq.com',
-          role: '成员'
-        },
-        {
-          nickname: '昵称5',
-          realName: '张三',
-          email: '3044545@qq.com',
-          role: '成员'
-        }
-      ],
+      options: [],
+      tableData: [],
       currentItem: {}
     }
   },

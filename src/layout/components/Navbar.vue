@@ -1,14 +1,13 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb class="breadcrumb-container" />
-
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar"/>
+    <el-button class="team" type="primary" icon="el-icon-s-custom" @click="toTeam">管理团队</el-button>
+    <el-button class="myTeam" type="info" round @click="toMyTeam">当前团队：{{ curTeam.name }}</el-button>
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -33,13 +32,18 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
-    Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      curTeam: {
+        name: '测试团队名假数据'
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -54,6 +58,12 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    toTeam() {
+      this.$router.push(`/`)
+    },
+    toMyTeam() {
+      this.$router.push(`/teamDetail`)
     }
   }
 }
@@ -65,7 +75,7 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -73,15 +83,32 @@ export default {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
     }
   }
 
-  .breadcrumb-container {
+  .team {
     float: left;
+    margin-top: 5px;
+    margin-left: 15px;
+    color: white;
+    background-color: #304156;
+    border-color: #304156;
+  }
+  .myTeam {
+    max-width: 430px;
+    margin-top: 10px;
+    margin-left: 15px;
+    padding: 6px;
+    font: 16px cursive;
+    color: #f6f6f6;
+    background-color: #5a5e66;
+    border-color: #304156;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .right-menu {

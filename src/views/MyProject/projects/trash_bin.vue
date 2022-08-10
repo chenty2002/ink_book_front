@@ -8,10 +8,12 @@
           :fetch-suggestions="querySearch"
           placeholder="搜索项目（名称或描述）"
           @select="autoCompleteSearchProject"
-          style="margin-right:10px;">
+          style="margin-right:10px;"
+        >
           <i
             class="el-icon-edit el-input__icon"
-            slot="suffix">
+            slot="suffix"
+          >
           </i>
           <template slot-scope="{ item }">
             <div class="name">{{ item.projectName }}</div>
@@ -27,18 +29,17 @@
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
-          style="margin-right:10px;">
+          style="margin-right:10px;"
+        >
         </el-date-picker>
         <el-form-item>
           <el-button icon="el-icon-search" @click="submitSearchProject"></el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
-      
-      
       <el-dropdown @command="switchSort">
         <span class="el-dropdown-link">
-          排序方式: {{sorting}}<i class="el-icon-arrow-down el-icon--right"></i>
+          排序方式: {{ sorting }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="创建时间顺序">创建时间顺序</el-dropdown-item>
@@ -46,7 +47,7 @@
           <el-dropdown-item command="项目名称顺序">项目名称顺序</el-dropdown-item>
           <el-dropdown-item command="项目名称倒序">项目名称倒序</el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>    
+      </el-dropdown>
     </div>
     <el-row>
       <el-col
@@ -80,14 +81,14 @@
               </div>
             </el-popover>
             <el-button-group style="margin-top: 13px">
-							<el-button
-								type="success"
-								icon="el-icon-check"
-								style="display: flex;
+              <el-button
+                type="success"
+                icon="el-icon-check"
+                style="display: flex;
 								justify-content: center;
 								width: 13px"
-								@click="restorePro(project)"
-							/>
+                @click="restorePro(project)"
+              />
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -122,50 +123,50 @@ export default {
         shortcuts: [{
           text: '两小时内',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(end.getTime() - 2*60*60*1000);
-            picker.$emit('pick', [start, end]);
+            const end = new Date()
+            const start = new Date()
+            start.setTime(end.getTime() - 2 * 60 * 60 * 1000)
+            picker.$emit('pick', [start, end])
           }
         }, {
           text: '今天',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date(new Date().setHours(0, 0, 0, 0));
+            const end = new Date()
+            const start = new Date(new Date().setHours(0, 0, 0, 0))
             // start.setTime(start.getDay);
-            picker.$emit('pick', [start, end]);
+            picker.$emit('pick', [start, end])
           }
         }, {
           text: '一周内',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(end.getTime() - 7*24*60*60*1000);
-            picker.$emit('pick', [start, end]);
+            const end = new Date()
+            const start = new Date()
+            start.setTime(end.getTime() - 7 * 24 * 60 * 60 * 1000)
+            picker.$emit('pick', [start, end])
           }
         }, {
           text: '一个月内',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(end.getTime() - 30*24*60*60*1000);
-            picker.$emit('pick', [start, end]);
+            const end = new Date()
+            const start = new Date()
+            start.setTime(end.getTime() - 30 * 24 * 60 * 60 * 1000)
+            picker.$emit('pick', [start, end])
           }
         }, {
           text: '六个月内',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(end.getTime() - 6*30*24*60*60*1000);
-            picker.$emit('pick', [start, end]);
+            const end = new Date()
+            const start = new Date()
+            start.setTime(end.getTime() - 6 * 30 * 24 * 60 * 60 * 1000)
+            picker.$emit('pick', [start, end])
           }
         }, {
           text: '一年内',
           onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(end.getTime() - 365*24*60*60*1000);
-            picker.$emit('pick', [start, end]);
+            const end = new Date()
+            const start = new Date()
+            start.setTime(end.getTime() - 365 * 24 * 60 * 60 * 1000)
+            picker.$emit('pick', [start, end])
           }
         }]
       },
@@ -183,50 +184,50 @@ export default {
     }
   },
   created() {
-    this.loadProject();
+    this.loadProject()
   },
   methods: {
     sortProjects() {
       // console.log(this.tableData)
-      switch(this.sorting) {
+      switch (this.sorting) {
         case '创建时间顺序':
           this.tableData.sort(function(p1, p2) {
-            var s1 = p1.createTime.replace("T", " ").replace(/-/g, "/");
-            var s2 = p2.createTime.replace("T", " ").replace(/-/g, "/");
-            var d1 = new Date(s1);
-            var d2 = new Date(s2);
-            return d2.getTime() - d1.getTime();
+            var s1 = p1.createTime.replace('T', ' ').replace(/-/g, '/')
+            var s2 = p2.createTime.replace('T', ' ').replace(/-/g, '/')
+            var d1 = new Date(s1)
+            var d2 = new Date(s2)
+            return d2.getTime() - d1.getTime()
           })
-          break;
+          break
         case '创建时间倒序':
           this.tableData.sort(function(p1, p2) {
-            var s1 = p1.createTime.replace("T", " ").replace(/-/g, "/");
-            var s2 = p2.createTime.replace("T", " ").replace(/-/g, "/");
-            var d1 = new Date(s1);
-            var d2 = new Date(s2);
-            return d1.getTime() - d2.getTime();
+            var s1 = p1.createTime.replace('T', ' ').replace(/-/g, '/')
+            var s2 = p2.createTime.replace('T', ' ').replace(/-/g, '/')
+            var d1 = new Date(s1)
+            var d2 = new Date(s2)
+            return d1.getTime() - d2.getTime()
           })
-          break;
+          break
         case '项目名称顺序':
           this.tableData.sort(function(p1, p2) {
-            return p1.projectName.localeCompare(p2.projectName);
+            return p1.projectName.localeCompare(p2.projectName)
           })
-          break;
+          break
         case '项目名称倒序':
           this.tableData.sort(function(p1, p2) {
-            return p2.projectName.localeCompare(p1.projectName);
+            return p2.projectName.localeCompare(p1.projectName)
           })
-          break;
+          break
       }
     },
     resetForm() {
-      this.searchWord = '';
+      this.searchWord = ''
       this.searchDate = {
         start: '',
         end: '',
         date: ''
       }
-      this.loadProject();
+      this.loadProject()
     },
     submitSearchProject() {
       searchProject({
@@ -238,29 +239,29 @@ export default {
       }).then((res) => {
         this.tableData = res.data
       })
-      this.sortProjects();
+      this.sortProjects()
     },
     querySearch(query, cb) {
-      var projects = this.tableData;
-      var results = query ? projects.filter(this.createFilter(query)) : projects;
-      console.log(results);
+      var projects = this.tableData
+      var results = query ? projects.filter(this.createFilter(query)) : projects
+      console.log(results)
       // 调用 callback 返回建议列表的数据
-      cb(results);
+      cb(results)
     },
     createFilter(queryString) {
       return (project) => {
-        return (project.projectName.toLowerCase().indexOf(queryString.toLowerCase()) !== -1 || project.projectDescription.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
+        return (project.projectName.toLowerCase().indexOf(queryString.toLowerCase()) !== -1 || project.projectDescription.toLowerCase().indexOf(queryString.toLowerCase()) !== -1)
+      }
     },
-    auotCompleteSearchProject(project) {
+    autoCompleteSearchProject(project) {
       this.searchWord = project.projectName
     },
     switchSort(command) {
-      this.sorting = command;
-      this.sortProjects();
+      this.sorting = command
+      this.sortProjects()
     },
     loadProject() {
-      getDeletedGroupProject({// todo: groupId
+      getDeletedGroupProject({ // todo: groupId
         groupId: 21
       }).then((res) => {
         if (res.code !== 1) {
@@ -269,33 +270,32 @@ export default {
           return
         }
         this.tableData = res.data
-        this.sortProjects();
-      });
-      
+        this.sortProjects()
+      })
     },
     changePage(num) {
       this.curPage = num
     },
-		restorePro(project) {
-			restoreProject({
-				projectId: project.projectId
-			}).then((res) => {
-				if(res.code !== 1) {
-					this.$error(res.msg)
-					return
-				}
-			})
-			resetForm();
-		},
+    restorePro(project) {
+      restoreProject({
+        projectId: project.projectId
+      }).then((res) => {
+        if (res.code !== 1) {
+          this.$error(res.msg)
+          return
+        }
+      })
+      this.resetForm()
+    },
     rmProject(project) {
       deleteProject({
         projectId: project.projectId,
         groupId: 21
       }).then((res) => {
         if (res.cdoe !== 1) {
-            this.$error(res.msg)
-            return
-          }
+          this.$error(res.msg)
+          return
+        }
       })
       this.resetForm()
     }
@@ -345,6 +345,7 @@ export default {
   cursor: pointer;
   color: #409EFF;
 }
+
 .el-icon-arrow-down {
   font-size: 12px;
 }
