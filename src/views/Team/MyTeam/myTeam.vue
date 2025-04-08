@@ -1,13 +1,13 @@
 <template>
   <div class="box">
     <!-- 邀请成员 -->
-    <el-dialog :title="currentOperation == 'ADD' ? '新增团队' : '编辑团队'" :visible.sync="dialogVisible2" width="600px">
+    <el-dialog :title="currentOperation === 'ADD' ? '新增团队' : '编辑团队'" :visible.sync="dialogVisible2" width="600px">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
         <el-form-item label="团队名称" prop="name">
-          <el-input v-model="ruleForm.groupName" placeholder="团队名称" />
+          <el-input v-model="ruleForm.groupName" placeholder="团队名称"/>
         </el-form-item>
         <el-form-item label="团队简介" prop="desc">
-          <el-input v-model="ruleForm.groupProfile" placeholder="团队简介" />
+          <el-input v-model="ruleForm.groupProfile" placeholder="团队简介"/>
         </el-form-item>
       </el-form>
 
@@ -22,9 +22,9 @@
         <el-button icon="el-icon-plus" type="primary" @click="dialogVisible2 = true">新建团队</el-button>
       </div>
 
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column fixed prop="name" label="团队名称" />
-        <el-table-column prop="desc" label="团队简介" />
+      <el-table :data="showtableData" border style="width: 100%">
+        <el-table-column fixed prop="groupName" label="团队名称"/>
+        <el-table-column prop="groupProfile" label="团队简介"/>
         <el-table-column fixed="right" label="操作" width="245">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click="handleDetail(scope.row)">管理团队</el-button>
@@ -33,11 +33,17 @@
           </template>
         </el-table-column>
       </el-table>
-<!--      这块绑定的参数没有定义-->
+      <!--      这块绑定的参数没有定义-->
       <div class="block">
-        <el-pagination :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper" :total="400" @size-change="handleSizeChange"
-          @current-change="" />
+        <el-pagination
+          :current-page="currentPage4"
+          :page-sizes="pagesizes"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="this.tableData.length"
+          @size-change="handleSizeChange"
+          @current-change="handlecurrent"
+        />
       </div>
     </el-card>
   </div>
@@ -45,9 +51,9 @@
 
 <script>
 import {
-  createGroup
+  createGroup, deleteGroup, getGroupList
 } from '@/api/group.js'
-import { mapState } from 'vuex'
+
 export default {
   name: 'MyTeam',
   data() {
@@ -55,7 +61,7 @@ export default {
       dialogVisible: false,
       dialogVisible2: false,
       ruleForm: {
-        userId:'',
+        groupId: '',
         groupName: '',
         groupProfile: ''
       },
@@ -67,18 +73,73 @@ export default {
           { required: true, message: '请输入团队简介', trigger: 'change' }
         ]
       },
+      // 当前点击的页码
+      currentPage4: 1,
+      // 用于展示的table数据，
+      // 他是tableData分离出来的，因为这里需要区分起始位置和终止位置，把这一段分离给showtableData用于展示
+      showtableData: [],
+      // 用于存储全部的table数据
       tableData: [],
-      currentOperation: 'ADD',
-      currentIndex: 0
+      // 用于一页显示多少行
+      pagesize: 5,
+      // 用于分页的数组，就是比如[10, 20, 30, 40]，10、20、30等参数就是可以选择每页显示多少行
+      pagesizes: [10, 20, 30, 40],
+      currentIndex: 0, currentOperation: ''
     }
-  },userId:'',
-  computed: mapState([
-    // 映射 this.userId 为 store.state.userId
-    'userId'
-  ]),
+  },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
+    // val参数就是显示多少行的参数
+    handleSizeChange(val) {
+      // 这个方法是用来改变每页显示多少行的，我们可以通过这个方法来改变pagesize的值，然后重新获取数据
+      // 所以用于展示的table数据需要设置为空数组，即【】
+      this.showtableData = []
+      this.pagesize = val
+      // 由于一页展示的行数改变，showtableData的长度=val
+      for (let i = 0; i < val; i++) {
+        this.showtableData.push(this.tableData[i])
+      }
+    },
+    // 点击页数，改变展示的table数据
+    // val参数就是点击的页数
+    handlecurrent(val) {
+      this.showtableData = []
+      // 由于页数改变，showtableData的长度=val*pagesize
+      const num = val * this.pagesize
+      // 用于比较这是不是最后一页，如果是最后一页，就展示最后一页的数据
+      const totals = this.tableData.length
+      // totals/this.pagesize 采用整除方式计算总页数
+      // totals%this.pagesize 采用求余方式计算是否最后一页是否能完整 以 页数的形式展示，如果这里》0表示没有除尽
+      let head = parseInt(totals / this.pagesize);
+      // 没有除尽则head+1
+      (totals % this.pagesize) > 0 ? head++ : head
+      // 判断当前页数是不是 head总页数，
+      // 是则展示 tabledata总数据
+      // 否则展示正常情况下的一段数据
+      const index = (val === head ? (totals) : (num))
+      // 这里判断是不是第一页，不是则val-1 是作为当前页码前一页，来作为起始位置
+      // index是目标终止位置
+      for (let i = val > 1 ? this.pagesize * (val - 1) : 0; i < index; i++) {
+        this.showtableData.push(this.tableData[i])
+      }
+      this.currentPage4 = val
+    },
+    getTableData() {
+      this.showtableData = []
+      getGroupList(this.$store.state.user.userId).then(res => {
+        this.tableData = res.data
+        this.pagesizes = res.data.length < 100 ? [4, 10] : [10, 20, 30, 40]
+        this.pagesize = res.data.length < 100 ? 4 : 10
+        for (let i = 0; i < this.pagesize; i++) {
+          this.showtableData.push(res.data[i])
+        }
+      })
+    },
+
     handleDetail(item) {
-      this.$router.push('/team/teamDetail')
+      this.$router.push('/teamDetail')
     },
     handleEdit(scope) {
       this.currentOperation = 'EDIT'
@@ -90,16 +151,27 @@ export default {
       }
     },
     handleRemove(scope) {
-      console.log(scope.$index)
-      this.tableData.splice(scope.$index, 1)
-      this.$message.success('移除成功！')
+      this.ruleForm.groupId = this.$store.state.user.userId
+      this.$confirm('确认删除该团队?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteGroup(this.$store.state.user.userId, this.tableData[scope.$index].id).then(res => {
+          this.getTableData()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     submitForm() {
-
-      this.ruleForm.userId=this.$store.state.user.userId;
+      this.ruleForm.userId = this.$store.state.user.userId
       createGroup(this.ruleForm).then((res) => {
         // if (res === 'success') {
-        console.log(res)
+        this.tableData.push(res.data)
         // this.$message({
         //     message: '修改菜单成功！',
         //     type: 'success'

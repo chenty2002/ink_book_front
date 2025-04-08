@@ -14,10 +14,10 @@
 
       <el-form-item prop="userEmail">
         <span class="svg-container">
-          <svg-icon icon-class="emai4" />
+          <svg-icon icon-class="email" />
         </span>
         <el-input
-          ref="userEmail"
+          ref="username"
           v-model="loginForm.userEmail"
           placeholder="邮箱"
           name="userEmail"
@@ -29,7 +29,7 @@
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password4" />
+          <svg-icon icon-class="password" />
         </span>
         <el-input
           :key="passwordType"
@@ -51,7 +51,7 @@
 
       <el-form-item v-if="!isLogin" prop="userRealName">
         <span class="svg-container">
-          <svg-icon icon-class="user4" />
+          <svg-icon icon-class="person" />
         </span>
         <el-input
           ref="userRealName"
@@ -64,15 +64,15 @@
         />
       </el-form-item>
 
-      <el-form-item v-if="!isLogin" prop="userName">
+      <el-form-item v-if="!isLogin" prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user4" />
+          <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="userName"
+          ref="username"
           v-model="loginForm.userName"
           placeholder="用户名"
-          name="userName"
+          name="username"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -81,9 +81,8 @@
       <!--邮箱验证-->
       <el-form-item v-if="!isLogin" prop="userEmailcode">
         <span class="svg-container">
-          <svg-icon icon-class="password4" />
+          <svg-icon icon-class="key" />
         </span>
-        <span />
         <el-input
           ref="userEmailcode"
           v-model="loginForm.userEmailcode"
@@ -93,16 +92,20 @@
           type="text"
           tabindex="1"
         />
-        <span><el-button :loading="sendmailloading" style="width:23%" type="primary" @click="sendemail">{{ 0 == this.statuscode ? '发送邮件' : this.statuscode }}</el-button></span>
+        <span>
+          <el-button :loading="sendmailloading" style="width:23%; background-color: #97a8be; border-color: #97a8be" type="primary" @click="sendemail">
+            {{ 0 == statuscode ? '发送邮件' : statuscode }}
+          </el-button>
+        </span>
       </el-form-item>
       <el-button
         :loading="loading"
         type="primary"
-        style="width: 100%; margin-bottom: 30px"
+        style="width: 100%; margin-bottom: 30px; background-color: #97a8be; border-color: #97a8be"
         @click.native.prevent="handleLoginOrRegister"
       >{{ isLogin ? "登录" : "注册" }}</el-button>
 
-      <div class="tips" @click="isLogin = !isLogin;loginForm.userEmail='',loginForm.userName='',loginForm.password=''">
+      <div class="tips" @click="isLogin = !isLogin">
         {{ isLogin ? "还没有账号？立即注册" : "已有账号，立即登录" }}
         <!-- <span style="margin-right: 20px">username: admin</span>
         <span> password: any</span> -->
@@ -154,6 +157,9 @@ export default {
     sendemail() {
       if (this.loginForm.userEmail === '') {
         this.$message.error('请输入邮箱!')
+        return
+      } else if (!/\w+@(\w+.)+[a-z]{2,3}/.test(this.loginForm.userEmail)) {
+        this.$message.error('邮箱格式不正确！')
         return
       }
 
@@ -236,7 +242,7 @@ export default {
                     this.loading = false
                     return
                   }
-                  this.$message.success('注册成功，请立即去登录！')
+                  this.$message.success('注册成功，立即登录！')
                   this.isLogin = true
                   this.loading = false
                 })
@@ -260,13 +266,9 @@ export default {
 
 <style lang="scss">
 
-$bg: #283443;
-$light_gray: #fff;
-$cursor: #fff;
-
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+@supports (-webkit-mask: none) and (not (cater-color: #fff)) {
   .login-container .el-input input {
-    color: $cursor;
+    color: #fff;
   }
 }
 
@@ -283,13 +285,13 @@ $cursor: #fff;
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      color: #222222;
       height: 47px;
-      caret-color: $cursor;
+      caret-color: #222222;
 
       &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
+        box-shadow: 0 0 0 1000px #e6e6e6 inset !important;
+        -webkit-text-fill-color: #222222 !important;
       }
     }
   }
@@ -304,15 +306,14 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
 
 .login-container {
-  min-height: 100%;
   width: 100%;
-  background-color: $bg;
-  overflow: hidden;
+  height: 100%;
+  background-image: url("../../assets/login_images/login_bg.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
 
   .login-form {
     position: relative;
@@ -325,7 +326,7 @@ $light_gray: #eee;
 
   .tips {
     font-size: 14px;
-    color: #fff;
+    color: #666666;
     margin-bottom: 10px;
     cursor: pointer;
     text-align: right;
@@ -339,7 +340,7 @@ $light_gray: #eee;
 
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color: #666666;
     vertical-align: middle;
     width: 30px;
     display: inline-block;
@@ -350,7 +351,7 @@ $light_gray: #eee;
 
     .title {
       font-size: 26px;
-      color: $light_gray;
+      color: #666666;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
@@ -362,7 +363,7 @@ $light_gray: #eee;
     right: 10px;
     top: 7px;
     font-size: 16px;
-    color: $dark_gray;
+    color: #666666;
     cursor: pointer;
     user-select: none;
   }

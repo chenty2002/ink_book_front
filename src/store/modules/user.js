@@ -7,7 +7,7 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    userId:''
+    userId: ''
   }
 }
 
@@ -26,8 +26,11 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_USER_ID: (state,userId) =>{
-    state.userId=userId
+  SET_USER_ID: (state, userId) => {
+    state.userId = userId
+  },
+  SET_GROUP_ID: (state, groupId) => {
+    state.groupId = groupId
   }
 }
 
@@ -47,6 +50,26 @@ const actions = {
     })
   },
 
+  // get group info
+  getGroupInfo({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getInfo(state.token).then(response => {
+        const { data } = response
+        if (!data) {
+          return reject('验证失败，请重新登录')
+        }
+
+        const { groupId, groupName, groupProfile } = data
+        commit('SET_GROUP_ID', groupId)
+        commit('SET_GROUP_NAME', groupName)
+        commit('SET_GROUP_PROFILE', groupProfile)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -56,13 +79,8 @@ const actions = {
           return reject('验证失败，请重新登录')
         }
 
-        const { userId,userEmail,password,userName,userRealName,avatar } = data
-
+        const { userId, userName, avatar, groupId } = data
         commit('SET_USER_ID', userId)
-        // commit('SET_USER_EMAIL', userEmail)
-        // commit('SET_USER_PASSWORD', oassword)
-        // commit('SET_USER_NAME', userName)
-        // commit('SET_USER_REAL_NAME', userRealName)
         commit('SET_NAME', userName)
         commit('SET_AVATAR', avatar)
         resolve(data)
